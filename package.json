@@ -1,0 +1,25 @@
+{
+  "name": "vagas-backend",
+  "version": "1.0.0",
+  "description": "Agregador de vagas de TI",
+  "main": "dist/index.js",
+  "scripts": {
+    "db:push": "node node_modules/prisma/dist/prisma.js db push",
+    "worker:run-once": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "apify-client": "^2.3.0",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3",
+    "node-telegram-bot-api": "^0.66.0"
+  },
+  "devDependencies": {
+    "@prisma/client": "^5.19.0",
+    "@types/node": "^20.17.0",
+    "@types/node-cron": "^3.0.11",
+    "@types/node-telegram-bot-api": "^0.64.7",
+    "prisma": "^5.19.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}
