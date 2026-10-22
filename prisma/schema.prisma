@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -16,7 +16,7 @@ model Job {
   location        String?
   jobUrl          String
   description     String
-  matchedKeywords String[]
+  matchedKeywords String
   status          String    @default("NEW")
   postedAt        DateTime?
   createdAt       DateTime  @default(now())
