@@ -1,15 +1,16 @@
-import { LinkedInAdapter } from '../adapters/linkedin.adapter';
+import { LinkedInNativeAdapter } from '../adapters/linkedin-native.adapter';
 import { analyzeJob } from '../analyzer';
 import { sendJobNotification } from '../bot/telegram';
 import { saveJob } from '../database/jobs.repository';
-import { NormalizedJob } from '../types/job';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 export async function runPipeline() {
-  console.log("=== INICIANDO PIPELINE DO WORKER (REAL) ===");
-  const adapter = new LinkedInAdapter();
+  console.log("=== INICIANDO PIPELINE DO WORKER (GRATUITO & NATIVO) ===");
+  
+ 
+  const adapter = new LinkedInNativeAdapter();
   
   const keywordsEnv = process.env.KEYWORDS_FILTER || 'Java,Vue,React,Junior,Júnior';
   const keywords = keywordsEnv.split(',').map(k => k.trim());
@@ -24,8 +25,6 @@ export async function runPipeline() {
     const analysis = analyzeJob(job, keywords);
     if (analysis.approved) {
       job.matchedKeywords = analysis.matchedKeywords;
-      // Adicionando a categoria à descrição ou como informação extra se necessário,
-      // pois o modelo de dados atual não tem campo 'category'
       job.description = `[Categoria: ${analysis.category}] ${job.description}`;
       
       const isNew = await saveJob(job);
