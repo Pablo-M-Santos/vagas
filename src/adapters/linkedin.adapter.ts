@@ -15,7 +15,7 @@ export class LinkedInAdapter implements JobPlatformAdapter {
       token: process.env.APIFY_API_TOKEN || '',
     });
     this.actorId = process.env.APIFY_LINKEDIN_ACTOR_ID || 'hKGsXqqfdEBZXbTxk';
-    this.searchKeywords = ["java junior", "vue.js", "react.js", "frontend junior", "fullstack junior"];
+    this.searchKeywords = ["java junior", "vue junior", "react junior", "frontend junior", "fullstack junior"];
   }
 
   async fetchJobs(query: { keywords: string[]; location?: string }): Promise<NormalizedJob[]> {
@@ -28,13 +28,11 @@ export class LinkedInAdapter implements JobPlatformAdapter {
       console.log(`[APIFY] Buscando por: "${keyword}"...`);
 
       try {
-        // Monta a URL de busca pública limpa do LinkedIn
-        const searchUrl = `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(keyword)}&location=Brazil&f_TPR=r86400`;
+        const searchUrl = `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(keyword)}&location=Brazil&f_TPR=r86400&f_WT=2`;
 
         const input = {
-          // O ator espera uma lista de strings puras, não objetos
           urls: [searchUrl],
-          maxItems: 15,
+          maxItems: 10, 
         };
 
         const run = await this.apifyClient.actor(this.actorId).call(input);
