@@ -4,3 +4,8 @@ dist/
 *.log
 TASKS.md
 WORKFLOW.md
+# Banco SQLite Local
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
