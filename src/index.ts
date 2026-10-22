@@ -1,15 +1,17 @@
-import { runPipeline } from './scheduler/index'; 
-import dotenv from 'dotenv';
+import cron from 'node-cron';
+import { runPipeline } from './scheduler';
 
-dotenv.config();
+console.log('🤖 [VAGAS-HUB] Worker iniciado na Nuvem!');
 
-async function main() {
-  console.log("Serviço Worker Iniciado...");
+// Executa uma vez imediatamente ao ligar o servidor
+runPipeline().catch(err => console.error('[ERRO NO WORKER INITIAL]:', err));
+
+// Agenda para rodar a cada 2 horas exatas (Expressão Cron: '0 */2 * * *')
+cron.schedule('0 */2 * * *', async () => {
+  console.log(`\n⏰ [CRON] Iniciando rotina automática de busca (${new Date().toLocaleString('pt-BR')})...`);
   try {
     await runPipeline();
   } catch (error) {
-    console.error("[ERRO NO WORKER]:", error);
+    console.error('[ERRO NO CRON WORKER]:', error);
   }
-}
-
-main();
+});

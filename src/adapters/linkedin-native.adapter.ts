@@ -42,7 +42,7 @@ export class LinkedInNativeAdapter implements JobPlatformAdapter {
 
       while (start < maxPages * 10) {
         try {
-          const targetUrl = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${encodeURIComponent(keyword)}&location=Brazil&f_TPR=r259200&f_WT=2&start=${start}`;
+          const targetUrl = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${encodeURIComponent(keyword)}&location=Brazil&f_TPR=r86400&f_WT=2&start=${start}`;
 
           console.log(`[LINKEDIN URL] 👉 ${targetUrl}`);
 

@@ -1,80 +1,357 @@
-# 🚀 Vagas-Backend: Agregador de Vagas de TI
+// projeto open-source · Node.js + TypeScript
 
-O **Vagas-Backend** é um sistema automatizado de coleta, análise e notificação de vagas de emprego na área de tecnologia. O foco principal é identificar oportunidades relevantes (Java, React, Vue) e filtrar o ruído de vagas que não correspondem ao perfil desejado.
+# Vagas-Hub
 
----
+Agrega, filtra e entrega vagas de TI Junior/Estágio diretamente no Telegram — sem busca manual, sem spam de recrutadora gringa.
 
-## 🎯 Objetivo do Projeto
+Node.js 20+ TypeScript SQLite · Prisma scraping nativo Telegram Bot
 
-O objetivo é centralizar a busca por vagas de TI em múltiplas plataformas, automatizando o processo de triagem e garantindo que o desenvolvedor receba apenas as oportunidades que realmente importam, diretamente em seu dispositivo.
+// motivação
 
-### O que ele resolve?
-- **Fim da busca manual:** Não é mais necessário navegar por dezenas de páginas do LinkedIn diariamente.
-- **Triagem inteligente:** Filtra automaticamente vagas por senioridade (rejeitando Sênior/Pleno quando o foco é Júnior/Pleno) e por tecnologias específicas.
-- **Notificação em tempo real:** Envia as vagas aprovadas para um canal no Telegram assim que são encontradas.
-- **Persistência de dados:** Mantém um histórico de vagas para evitar duplicidade de notificações.
+## O problema que isso resolve
 
----
+🔍
 
-## 🛠 Estrutura do Projeto
+Busca manual diária
 
-O projeto é construído com **Node.js**, **TypeScript**, **Prisma** e **PostgreSQL**, organizado de forma modular:
+Navegar pelo LinkedIn todo dia é exaustivo e ineficiente. O worker faz isso automaticamente, coletando vagas das últimas 72h.
 
-- **`src/adapters`**: Camada de integração com plataformas externas (atualmente via Apify para LinkedIn).
-- **`src/analyzer`**: Motor de heurística que analisa o título e a descrição das vagas para aprovação ou rejeição.
-- **`src/bot`**: Módulo de comunicação com a API do Telegram.
-- **`src/database`**: Repositórios Prisma para persistência de dados.
-- **`src/scheduler`**: Orquestrador da pipeline que coordena o fluxo entre coleta -> análise -> persistência -> notificação.
+🚫
 
----
+Vagas Sênior disfarçadas
 
-## 🏗 Estrutura de Dados (Banco de Dados)
+Muitos anúncios "Júnior" escondem requisitos de Pleno/Sênior. O analisador rejeita qualquer cargo fora do nível de entrada.
 
-Utilizamos o **PostgreSQL** com a seguinte modelagem principal:
+🌐
+
+Consultorias de gringa
+
+BairesDev, Turing, Jobbol e similares poluem os resultados. A blacklist de empresas elimina essas fontes antes mesmo da análise.
+
+🔁
+
+Notificações repetidas
+
+Sem deduplicação, a mesma vaga aparece toda vez. O histórico local em SQLite garante que cada vaga seja notificada uma única vez.
+
+// arquitetura
+
+## Como o pipeline funciona
+
+Cada execução do worker percorre cinco etapas em sequência. Uma falha em qualquer etapa é registrada no `ExecutionLog` sem derrubar o processo inteiro.
+
+🕸
+
+Scraping
+
+Axios + Cheerio\
+Paginação profunda\
+LinkedIn nativo
+
+→
+
+🛡
+
+Anti-Spam
+
+Blacklist de\
+empresas e\
+plataformas
+
+→
+
+🧠
+
+Analyzer
+
+Heurística com\
+safeRegex · valida\
+stack + senioridade
+
+→
+
+💾
+
+Deduplicação
+
+Persiste no SQLite\
+via Prisma ORM\
+Evita re-notificar
+
+→
+
+📲
+
+Notificação
+
+Bot API Telegram\
+Mensagem HTML\
+formatada
+
+ℹ️
+
+**Scraping 100% gratuito:** o projeto não usa Apify nem qualquer API paga. A coleta é feita diretamente nas páginas públicas do LinkedIn usando queries compostas com filtros de data, localização e trabalho remoto (`f_WA=1`).
+
+// tecnologias
+
+## Stack técnica
+
+Runtime
+
+Node.js 20+
+
+TypeScript com strict mode
+
+Scraping
+
+Axios + Cheerio
+
+HTTP nativo + parsing de HTML
+
+Banco de Dados
+
+SQLite
+
+Arquivo local, zero config
+
+ORM
+
+Prisma
+
+Migrations + repositórios tipados
+
+Notificações
+
+Telegram Bot API
+
+Mensagens em HTML5 formatado
+
+Agendamento
+
+npm scripts
+
+Execução manual ou via PM2/cron
+
+// lógica central
+
+## Motor de análise (Analyzer)
+
+O Analyzer aplica regras em cascata ao título e à descrição de cada vaga. A aprovação exige que *todos* os critérios sejam satisfeitos; qualquer falha rejeita a vaga imediatamente.
+
+✅ Front-end aprovado
+
+Vue.js Nuxt React Next.js TypeScript
+
+✅ Back-end aprovado
+
+Java Spring Boot Node.js Express AdonisJS
+
+🚫 Senioridade rejeitada
+
+Pleno Sênior Sr. Tech Lead Arquiteto Especialista
+
+⛔ Stacks fora do escopo
+
+Python .NET / C# PHP C++ Salesforce Ruby
+
+### Blacklist de empresas
+
+Plataformas de recrutamento e "body shops" são removidas antes da análise de conteúdo, evitando desperdício de processamento:
+
+BairesDev Turing Jobbol Revelo TopTal Anywhere.club Lemon.io
+
+### Nível de entrada permitido
+
+Júnior Jr. Estágio Estagiário Trainee Entry-level
+
+// código-fonte
+
+## Estrutura do projeto
+
+```
+vagas-hub/
+├── prisma/
+│   └── schema.prisma        # Schema SQLite + modelos Job e ExecutionLog
+├── src/
+│   ├── adapters/
+│   │   └── linkedin-native.adapter.ts  # Scraper Axios/Cheerio com paginação e anti-spam
+│   ├── analyzer/
+│   │   └── index.ts             # Motor de regras: safeRegex, filtros de stack/senioridade
+│   ├── bot/
+│   │   └── telegram.ts          # Integração com Bot API do Telegram (HTML mode)
+│   ├── database/
+│   │   ├── client.ts            # Instância singleton do PrismaClient
+│   │   └── job.repository.ts    # CRUD de vagas e verificação de duplicatas
+│   ├── scheduler/
+│   │   └── index.ts             # Orquestrador: coleta → filtra → analisa → persiste → notifica
+│   └── index.ts                 # Entry point do worker
+├── .env                         # Variáveis de ambiente (não versionar)
+├── package.json
+└── README.md
+```
+
+// banco de dados
+
+## Modelagem (SQLite)
 
 ### Tabela `Job`
+
 | Campo | Tipo | Descrição |
-| :--- | :--- | :--- |
-| `id` | UUID | Identificador único interno. |
-| `externalJobId` | String | ID da vaga na plataforma de origem (LinkedIn, etc). |
-| `platform` | String | Nome da plataforma (ex: `LINKEDIN`). |
-| `title` | String | Título da oportunidade. |
-| `company` | String | Empresa contratante. |
-| `location` | String | Localização (ou Remoto). |
-| `jobUrl` | String | Link direto para a vaga. |
-| `matchedKeywords`| String[] | Lista de tecnologias identificadas na vaga. |
-| `status` | String | Estado da vaga (ex: `NEW`, `SENT`). |
-| `postedAt` | DateTime | Data de publicação original. |
+| --- | --- | --- |
+| id PK | String (UUID) | Identificador único interno gerado pelo Prisma |
+| externalJobId | String | ID original da vaga na plataforma (usado para deduplicação) |
+| platform | String | Plataforma de origem — ex: `LINKEDIN` |
+| title | String | Título completo do cargo |
+| company | String | Razão social ou nome fantasia da empresa |
+| location | String | Cidade/estado ou `Remoto` |
+| jobUrl | String | URL direta para a vaga na plataforma de origem |
+| matchedKeywords | String\[\] | Tecnologias identificadas pelo Analyzer (ex: `["Java","Spring"]`) |
+| status | String | Estado do fluxo: `NEW` → `SENT` |
+| postedAt | DateTime | Data de publicação original extraída do LinkedIn |
+| createdAt | DateTime | Timestamp de inserção no banco local |
 
 ### Tabela `ExecutionLog`
-Responsável por monitorar a saúde do worker, registrando o horário de início, fim, quantidade de vagas encontradas e possíveis erros.
 
----
+Registra cada execução do worker para monitoramento de saúde e rastreabilidade de erros.
 
-## ✅ Melhorias e Roadmap
+| Campo | Tipo | Descrição |
+| --- | --- | --- |
+| id PK | Int | Autoincremento |
+| startedAt | DateTime | Início da execução |
+| finishedAt | DateTime? | Término (nulo se ainda em andamento) |
+| jobsFound | Int | Total de vagas coletadas no ciclo |
+| jobsSent | Int | Vagas novas enviadas ao Telegram |
+| error | String? | Mensagem de erro, se houver |
 
-### Já Implementado
-- [x] Integração corrigida com Apify (LinkedIn Actor).
-- [x] Filtro de trabalho remoto (`f_WA=1`) otimizado.
-- [x] Análise por palavras-chave (Junior, Java, Vue, React).
-- [x] Sistema de deduplicação (não notifica a mesma vaga duas vezes).
-- [x] Notificação via Telegram em formato HTML.
+// instalação
 
-### Próximos Passos
-- [ ] **IA no Analyzer:** Substituir heurística por análise semântica via LLM (GPT-4o/Mini) para maior precisão.
-- [ ] **Novas Plataformas:** Adicionar suporte para Gupy, Indeed e Glassdoor.
-- [ ] **Painel Administrativo:** Interface Web para visualizar as vagas salvas e gerenciar filtros.
-- [ ] **Filtros Avançados:** Exclusão baseada em faixas salariais ou empresas específicas.
+## Como executar
 
----
+1
 
-## 🚀 Como Rodar
+Clone o repositório
 
-1. **Configurar variáveis:** Crie um arquivo `.env` com `DATABASE_URL`, `APIFY_API_TOKEN`, `TELEGRAM_BOT_TOKEN` e `TELEGRAM_CHAT_ID`.
-2. **Instalar dependências:** `npm install`
-3. **Sincronizar Banco:** `npm run db:push`
-4. **Executar:** `npm run worker:run-once`
+```
+git clone https://github.com/seu-usuario/vagas-hub.git
+cd vagas-hub
+```
 
----
+2
 
-Desenvolvido para automatizar o sucesso na carreira de TI. 🚀
+Instale as dependências
+
+```
+npm install
+```
+
+3
+
+Configure as variáveis de ambiente
+
+Crie um arquivo `.env` na raiz. Veja a tabela de configuração abaixo para detalhes de cada variável.
+
+```
+cp .env.example .env
+# edite .env com suas credenciais
+```
+
+4
+
+Sincronize o banco de dados
+
+Cria o arquivo `vagas.db` e aplica o schema do Prisma.
+
+```
+npm run db:push
+```
+
+5
+
+Execute o worker
+
+Para um ciclo único de teste:
+
+```
+npm run worker:run-once
+```
+
+Para execução contínua via PM2:
+
+```
+pm2 start npm --name "vagas-hub" -- run worker:start
+pm2 save
+```
+
+// configuração
+
+## Variáveis de ambiente (`.env`)
+
+| Variável | Obrigatório | Descrição e exemplo |
+| --- | --- | --- |
+| DATABASE_URL | req | Caminho para o banco SQLite file:./vagas.db |
+| TELEGRAM_BOT_TOKEN | req | Token do bot obtido via @BotFather no Telegram 123456789:AAHx... |
+| TELEGRAM_CHAT_ID | req | ID do canal ou grupo onde as vagas serão enviadas -1001234567890 |
+| LINKEDIN_SEARCH_KEYWORDS | opt | Palavras-chave customizadas para a query do LinkedIn Java Junior OR React Junior OR Vue Junior |
+| LINKEDIN_GEO_ID | opt | ID geográfico do LinkedIn para filtrar por região 106057199 (Brasil) |
+| MAX_PAGES | opt | Número máximo de páginas de resultados a coletar (padrão: 3) 5 |
+| NODE_ENV | opt | Ambiente de execução development \| production |
+
+💡
+
+Para encontrar o **Chat ID** do seu canal, adicione o bot como administrador e acesse `https://api.telegram.org/bot<TOKEN>/getUpdates` após enviar uma mensagem no canal.
+
+// evolução
+
+## Roadmap
+
+### Concluído
+
+✓
+
+Scraping nativo gratuito com Axios + Cheerio
+
+✓
+
+Suporte multi-stack: Front-end (Vue/React/TS) e Back-end (Java/Node)
+
+✓
+
+Blacklist de empresas e paginação profunda
+
+✓
+
+Deduplicação via SQLite (evita reenvio da mesma vaga)
+
+✓
+
+Notificações formatadas em HTML no Telegram
+
+✓
+
+ExecutionLog para rastreabilidade de erros e saúde do worker
+
+### Planejado
+
+Automação periódica via PM2 + Cron Job
+
+Executar o worker automaticamente a cada N horas sem intervenção manual
+
+IA no Analyzer: substituir heurística por LLM (GPT-4o Mini)
+
+Análise semântica para melhor precisão na triagem de descrições longas
+
+Expansão para Gupy e Indeed
+
+Novos adapters seguindo a mesma interface do linkedin-native.adapter.ts
+
+Painel administrativo web
+
+Interface para visualizar vagas salvas, gerenciar blacklists e ver métricas de execução
+
+Filtros avançados configuráveis
+
+Exclusão por faixa salarial mínima, modelo de trabalho e empresas específicas via .env ou painel
+
+Desenvolvido para automatizar a busca de oportunidades em TI nível Júnior no mercado brasileiro.
+
+Node.js TypeScript Prisma SQLite Telegram
