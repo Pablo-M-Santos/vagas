@@ -4,10 +4,13 @@
   "description": "Agregador de vagas de TI",
   "main": "dist/index.js",
   "scripts": {
-    "db:push": "node node_modules/prisma/dist/prisma.js db push",
+    "db:push": "npx prisma db push",
+    "build": "npx prisma generate && tsc && npx prisma db push",
+    "start": "node dist/index.js",
     "worker:run-once": "ts-node src/index.ts"
   },
   "dependencies": {
+    "@prisma/client": "^5.19.0",
     "apify-client": "^2.3.0",
     "axios": "^1.20.0",
     "cheerio": "^1.2.0",
@@ -16,7 +19,6 @@
     "node-telegram-bot-api": "^0.66.0"
   },
   "devDependencies": {
-    "@prisma/client": "^5.19.0",
     "@types/cheerio": "^0.22.35",
     "@types/node": "^20.17.0",
     "@types/node-cron": "^3.0.11",
