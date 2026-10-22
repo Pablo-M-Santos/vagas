@@ -98,7 +98,7 @@ export class LinkedInNativeAdapter implements JobPlatformAdapter {
               location,
               jobUrl: jobUrl.split('?')[0],
               description: `${title} - Vaga de tecnologia anunciada recentemente no Brasil.`,
-              matchedKeywords: [],
+              matchedKeywords: '',
               postedAt: new Date(postedAtText),
             });
           });

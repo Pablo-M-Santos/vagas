@@ -17,16 +17,21 @@ export async function saveJob(job: NormalizedJob): Promise<boolean> {
       return false;
     }
 
+    // Trata matchedKeywords para formato String do SQLite
+    const keywordsFormatted = Array.isArray(job.matchedKeywords)
+      ? job.matchedKeywords.join(', ')
+      : job.matchedKeywords || '';
+
     await prisma.job.create({
       data: {
         externalJobId: job.externalJobId,
         platform: job.platform,
         title: job.title,
         company: job.company,
-        location: job.location,
+        location: job.location || 'Brasil',
         jobUrl: job.jobUrl,
-        description: job.description,
-        matchedKeywords: job.matchedKeywords,
+        description: job.description || `${job.title} na empresa ${job.company}`,
+        matchedKeywords: keywordsFormatted,
         postedAt: job.postedAt || new Date(),
         status: 'NEW',
       },

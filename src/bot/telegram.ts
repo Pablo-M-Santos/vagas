@@ -7,12 +7,18 @@ dotenv.config();
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const chatId = process.env.TELEGRAM_CHAT_ID;
 
+
 export async function sendJobNotification(job: NormalizedJob): Promise<boolean> {
+
+const keywordsText = Array.isArray(job.matchedKeywords)
+  ? job.matchedKeywords.join(', ')
+  : job.matchedKeywords;
+
   const message = `
 💼 <b>${job.title}</b>
 🏢 <b>Empresa:</b> ${job.company}
 📍 <b>Local:</b> ${job.location || 'Não informado'}
-🔑 <b>Skills:</b> ${job.matchedKeywords.join(', ')}
+🔑 <b>Skills:</b> ${Array.isArray(job.matchedKeywords) ? job.matchedKeywords.join(', ') : job.matchedKeywords}
 
 🔗 <a href="${job.jobUrl}">Candidatar-se na Vaga</a>
   `.trim();

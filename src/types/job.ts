@@ -6,7 +6,7 @@ export interface NormalizedJob {
   location?: string | null;
   jobUrl: string;
   description: string;
-  matchedKeywords: string[];
+  matchedKeywords: string | string[];
   postedAt?: Date | null;
 }
 
