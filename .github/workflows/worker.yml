@@ -3,27 +3,35 @@ name: Vagas Worker Cron
 on:
   schedule:
     - cron: '0 */2 * * *' # Roda a cada 2 horas
-  workflow_dispatch: # Permite rodar manualmente pelo painel do GitHub
+  workflow_dispatch: # Permite disparar manualmente pelo painel do GitHub
 
 jobs:
   run-worker:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Instalar dependências
+        run: npm ci
 
-      - name: Run worker
+      - name: Gerar Prisma Client e Criar Tabelas
+        run: |
+          npx prisma generate
+          npx prisma db push --skip-generate
+        env:
+          DATABASE_URL: "file:./vagas.db"
+
+      - name: Executar Worker de Vagas
+        run: npm run worker:run-once
         env:
           DATABASE_URL: "file:./vagas.db"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: npm run worker:run-once
