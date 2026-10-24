@@ -2,8 +2,8 @@ name: Vagas Worker Cron
 
 on:
   schedule:
-    - cron: '0 */2 * * *' # Roda a cada 2 horas
-  workflow_dispatch: # Permite disparar manualmente pelo painel do GitHub
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
 
 jobs:
   run-worker:
@@ -35,3 +35,12 @@ jobs:
           DATABASE_URL: "file:./vagas.db"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+      - name: Persistir banco SQLite no repositório
+        if: always()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add vagas.db
+          git commit -m "chore(db): update sqlite state [skip ci]" || exit 0
+          git push

@@ -6,7 +6,6 @@ export class LinkedInNativeAdapter implements JobPlatformAdapter {
   readonly platformName = 'LINKEDIN';
   private searchKeywords: string[];
 
-  // Blacklist de empresas descartadas no ato da raspagem
   private blockedCompanies = ['bairesdev', 'jobbol', 'turing', 'crossover'];
 
   constructor() {
@@ -73,9 +72,11 @@ export class LinkedInNativeAdapter implements JobPlatformAdapter {
               return; 
             }
 
-            const jobUrl = $card.find('a.base-card__full-link').attr('href') || $card.find('a').attr('href') || '';
-            const jobIdMatch = jobUrl.match(/view\/([0-9]+)/) || jobUrl.match(/-([0-9]+)\?/);
-            const externalJobId = jobIdMatch ? jobIdMatch[1] : Math.random().toString(36).substring(7);
+            const rawJobUrl = $card.find('a.base-card__full-link').attr('href') || $card.find('a').attr('href') || '';
+            const cleanUrl = rawJobUrl.split('?')[0]; 
+
+            const jobIdMatch = cleanUrl.match(/view\/([0-9]+)/) || cleanUrl.match(/-([0-9]+)$/);
+            const externalJobId = jobIdMatch ? jobIdMatch[1] : null;
 
             if (!externalJobId || seenIds.has(externalJobId)) {
               return;
@@ -96,7 +97,7 @@ export class LinkedInNativeAdapter implements JobPlatformAdapter {
               title,
               company,
               location,
-              jobUrl: jobUrl.split('?')[0],
+              jobUrl: cleanUrl,
               description: `${title} - Vaga de tecnologia anunciada recentemente no Brasil.`,
               matchedKeywords: '',
               postedAt: new Date(postedAtText),

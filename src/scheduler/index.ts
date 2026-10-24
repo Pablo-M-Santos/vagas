@@ -9,7 +9,6 @@ dotenv.config();
 export async function runPipeline() {
   console.log("=== INICIANDO PIPELINE DO WORKER (GRATUITO & NATIVO) ===");
   
- 
   const adapter = new LinkedInNativeAdapter();
   
   const keywordsEnv = process.env.KEYWORDS_FILTER || 'Java,Vue,React,Junior,Júnior';
@@ -20,16 +19,24 @@ export async function runPipeline() {
   console.log(`[PIPELINE] ${jobs.length} vagas coletadas para análise.`);
 
   let newJobsCount = 0;
+  const notifiedInThisRun = new Set<string>();
 
   for (const job of jobs) {
+    if (notifiedInThisRun.has(job.externalJobId)) {
+      continue;
+    }
+
     const analysis = analyzeJob(job, keywords);
     if (analysis.approved) {
-      job.matchedKeywords = analysis.matchedKeywords;
-      job.description = `[Categoria: ${analysis.category}] ${job.description}`;
+      job.matchedKeywords = Array.isArray(analysis.matchedKeywords) 
+        ? analysis.matchedKeywords.join(', ') 
+        : analysis.matchedKeywords || '';
+      job.description = `[Categoria: ${analysis.category}] ${job.description || ''}`;
       
       const isNew = await saveJob(job);
       if (isNew) {
         await sendJobNotification(job);
+        notifiedInThisRun.add(job.externalJobId);
         newJobsCount++;
       }
     }
