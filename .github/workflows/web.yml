@@ -1,0 +1,48 @@
+name: web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/web.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/web.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    env:
+      # Caminho relativo ao schema (frontend/prisma/schema.prisma -> symlink p/ prisma/schema.prisma).
+      # Nenhuma rota é pré-renderizada, então o build não abre o banco.
+      DATABASE_URL: "file:../../prisma/vagas.db"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Testes
+        run: npm test
+
+      - name: Build
+        run: npm run build
