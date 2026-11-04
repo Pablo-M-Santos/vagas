@@ -1,18 +1,21 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #f6f7fb;
+  --color-background: #ffffff;
   --color-surface: #ffffff;
-  --color-ink: #0f172a;
-  --color-muted: #5b667d;
-  --color-line: #e4e7ef;
-  --color-accent: #4f46e5;
-  --color-accent-soft: #eef2ff;
+  --color-surface-subtle: #f8fafc;
+  --color-ink: #090d16;
+  --color-muted: #64748b;
+  --color-line: #e2e8f0;
+  --color-line-subtle: #f1f5f9;
+  --color-primary: #1d4ed8;
+  --color-primary-hover: #1e40af;
+  --color-accent: #2563eb;
+  --color-accent-soft: #eff6ff;
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* Tema claro por padrão — o projeto é light-first. */
 :root {
   color-scheme: light;
 }
@@ -57,60 +60,12 @@ body {
   }
 }
 
-/* ---------------------------------------------------------------
-   Animações da landing (CSS puro — sem JS na sequência crítica)
-   --------------------------------------------------------------- */
-
-@keyframes hero-in {
-  from {
-    transform: translateY(24px);
-  }
-  to {
-    transform: none;
-  }
+/* Animações utilitárias */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.08); }
 }
 
-@keyframes hero-card-in {
-  from {
-    transform: translateY(32px) rotate(-1.5deg);
-  }
-  to {
-    transform: translateY(0) rotate(-1.5deg);
-  }
-}
-
-@keyframes hero-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes hero-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.hero-in {
-  animation: hero-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.hero-card {
-  transform: rotate(-1.5deg);
-  animation: hero-card-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
-}
-
-.hero-badge {
-  animation: hero-fade 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.hero-float {
-  animation: hero-float 6s ease-in-out infinite;
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

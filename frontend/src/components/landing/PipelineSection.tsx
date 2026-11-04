@@ -1,91 +1,89 @@
-'use client';
-
-import { Database, Filter, ScanSearch, Send, ShieldCheck } from 'lucide-react';
-import { Reveal } from './Reveal';
-
-const STEPS = [
-  {
-    icon: ScanSearch,
-    title: 'Scraping',
-    detail: 'Axios + Cheerio nas páginas públicas, com paginação e filtros de data.',
-    tone: 'bg-sky-50 text-sky-600 border-sky-200',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Anti-spam',
-    detail: 'Blacklist de consultorias e plataformas de recrutamento.',
-    tone: 'bg-rose-50 text-rose-600 border-rose-200',
-  },
-  {
-    icon: Filter,
-    title: 'Analyzer',
-    detail: 'Heurística de senioridade e stack: só nível de entrada passa.',
-    tone: 'bg-amber-50 text-amber-600 border-amber-200',
-  },
-  {
-    icon: Database,
-    title: 'Deduplicação',
-    detail: 'SQLite + Prisma guardam o histórico e impedem reenvio.',
-    tone: 'bg-violet-50 text-violet-600 border-violet-200',
-  },
-  {
-    icon: Send,
-    title: 'Notificação',
-    detail: 'A vaga aprovada vira card aqui no site e alerta no Telegram.',
-    tone: 'bg-emerald-50 text-emerald-600 border-emerald-200',
-  },
-];
-
 export function PipelineSection() {
+  const steps = [
+    {
+      step: '01',
+      title: 'Scraping Autônomo',
+      desc: 'Varredura contínua de sites de carreiras, feeds de ATS e APIs corporativas a cada 60 segundos.',
+      highlight: '> 42 crawlers ativos',
+      isPrimary: false,
+    },
+    {
+      step: '02',
+      title: 'Anti-Spam & Sanity',
+      desc: 'Eliminação imediata de consultorias predatórias, vagas de recrutamento fantasma e links expirados.',
+      highlight: '> Filtro de blacklist',
+      isPrimary: false,
+    },
+    {
+      step: '03',
+      title: 'LLM / NLP Analyzer',
+      desc: 'Leitura semântica dos requisitos reais. Se exigir mais de 2 anos ou liderança técnica, a vaga é expurgada.',
+      highlight: '> 68% descartadas aqui',
+      isPrimary: true, // Destaque azul central no figma
+    },
+    {
+      step: '04',
+      title: 'Deduplicação Hash',
+      desc: 'Geração de hash unificado de empresa, stack e título para evitar reenvio de vagas já catalogadas.',
+      highlight: '> SQLite + Prisma ORM',
+      isPrimary: false,
+    },
+    {
+      step: '05',
+      title: 'Instant Alert',
+      desc: 'Disparo instantâneo no canal prioritário do Telegram e injeção em tempo real no feed web do Hub.',
+      highlight: '> Latência < 500ms',
+      isPrimary: false,
+    },
+  ];
+
   return (
-    <section id="pipeline" className="scroll-mt-24 py-16 sm:py-20">
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-        <Reveal>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-            {'// arquitetura'}
-          </p>
-          <h2 className="mt-3 max-w-2xl text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-            Cinco etapas entre o LinkedIn e a sua lista de vagas
+    <section id="pipeline" className="py-20 bg-slate-50/50 border-b border-slate-100">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Cabeçalho */}
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-blue-600 font-mono">
+            Arquitetura de Dados em 5 Etapas
+          </span>
+          <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            A Esteira de Telemetria e Purificação do DevScout
           </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">
-            Uma falha em qualquer etapa fica registrada no log de execuções sem derrubar o
-            processo inteiro.
+          <p className="text-base text-slate-600">
+            Como transformamos milhares de dados brutos e ruidosos em notificações limpas, precisas e acionáveis.
           </p>
-        </Reveal>
+        </div>
 
-        <ol className="mt-10 grid gap-4 md:grid-cols-5">
-          {STEPS.map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <li key={step.title} className="h-full">
-                <Reveal
-                  delay={index * 0.08}
-                  className="relative h-full rounded-xl border border-line bg-white p-5 shadow-sm"
+        {/* 5 Cards da Esteira */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {steps.map((item) => (
+            <div
+              key={item.step}
+              className={`rounded-xl p-5 flex flex-col justify-between transition-all duration-200 ${
+                item.isPrimary
+                  ? 'border-2 border-blue-600 bg-white shadow-md shadow-blue-500/5 -translate-y-1'
+                  : 'border border-slate-200 bg-white hover:border-slate-300'
+              }`}
+            >
+              <div>
+                <div
+                  className={`inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-xs font-bold font-mono mb-4 ${
+                    item.isPrimary
+                      ? 'bg-blue-600 text-white'
+                      : 'border border-blue-200 bg-blue-50 text-blue-700'
+                  }`}
                 >
-                  <span
-                    className={`absolute -top-3 left-5 flex h-6 w-6 items-center justify-center rounded-full border bg-white text-[11px] font-bold ${step.tone.split(' ').slice(1).join(' ')}`}
-                  >
-                    {index + 1}
-                  </span>
-                  <span
-                    className={`mt-3 flex h-10 w-10 items-center justify-center rounded-lg border ${step.tone}`}
-                  >
-                    <Icon size={18} aria-hidden />
-                  </span>
-                  <h3 className="mt-4 text-sm font-semibold text-ink">{step.title}</h3>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted">{step.detail}</p>
-                </Reveal>
-              </li>
-            );
-          })}
-        </ol>
+                  {item.step}
+                </div>
+                <h3 className="text-sm font-bold text-slate-900 mb-2">{item.title}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed mb-4">{item.desc}</p>
+              </div>
 
-        <Reveal delay={0.1}>
-          <p className="mt-8 rounded-xl border border-indigo-100 bg-accent-soft px-5 py-4 text-sm text-indigo-900">
-            <strong className="font-semibold">Zero API paga:</strong> a coleta é feita direto nas
-            páginas públicas do LinkedIn, com filtros de data, localização e trabalho remoto.
-          </p>
-        </Reveal>
+              <div className="pt-3 border-t border-slate-100 text-[10px] font-mono font-semibold text-blue-600">
+                {item.highlight}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

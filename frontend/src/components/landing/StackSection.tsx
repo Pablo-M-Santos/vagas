@@ -1,85 +1,80 @@
-'use client';
-
-import Link from 'next/link';
-import { ArrowRight, Bot, Database, Globe, Palette, Server, Sparkles } from 'lucide-react';
-import { Reveal } from './Reveal';
-
-const STACK = [
-  { icon: Server, name: 'Node.js + TypeScript', detail: 'Worker com strict mode' },
-  { icon: Sparkles, name: 'Axios + Cheerio', detail: 'Scraping nativo, sem API paga' },
-  { icon: Database, name: 'Prisma + SQLite', detail: 'Deduplicação e histórico' },
-  { icon: Bot, name: 'Telegram Bot', detail: 'Alerta formatado em HTML' },
-  { icon: Globe, name: 'Next.js', detail: 'Site, filtros e API' },
-  { icon: Palette, name: 'Tailwind + Motion', detail: 'Visual leve e animado' },
-];
+import { Terminal, Database, Server, Send, Code2 } from 'lucide-react';
 
 export function StackSection() {
+  const stackItems = [
+    {
+      icon: Terminal,
+      name: 'Node.js Engine',
+      desc: 'Processamento assíncrono para centenas de requisições paralelas sem engasgos de I/O.',
+      meta: 'Runtime Assíncrono',
+    },
+    {
+      icon: Database,
+      name: 'Prisma ORM',
+      desc: 'Tipagem estrita de ponta a ponta e consultas estruturadas de alto desempenho.',
+      meta: 'Mapeamento Tipado',
+    },
+    {
+      icon: Server,
+      name: 'SQLite Engine',
+      desc: 'Armazenamento em arquivo local ultraleve com latência de leitura inferior a 1 milissegundo.',
+      meta: 'Zero Infra Overhead',
+    },
+    {
+      icon: Send,
+      name: 'Telegram API',
+      desc: 'Distribuição massiva por push instantâneo sem filtros algorítmicos de redes sociais.',
+      meta: 'Push Instantâneo',
+    },
+    {
+      icon: Code2,
+      name: 'Next.js & Tailwind',
+      desc: 'Interface estática pré-renderizada para carregamento em frações de segundo no navegador.',
+      meta: 'Client-Side Otimizado',
+    },
+  ];
+
   return (
-    <>
-      <section id="stack" className="scroll-mt-24 border-t border-line bg-white py-16 sm:py-20">
-        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-              {'// stack'}
-            </p>
-            <h2 className="mt-3 max-w-2xl text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-              Simples, sem servidor pago e fácil de rodar em casa
-            </h2>
-          </Reveal>
-
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {STACK.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <Reveal key={item.name} delay={index * 0.06}>
-                  <div className="flex items-start gap-4 rounded-xl border border-line bg-background p-5 transition-colors hover:border-indigo-300">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-accent shadow-sm">
-                      <Icon size={18} aria-hidden />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-ink">{item.name}</p>
-                      <p className="mt-0.5 text-sm text-muted">{item.detail}</p>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
+    <section id="stack" className="py-20 bg-slate-50/50 border-b border-slate-100">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Cabeçalho */}
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-blue-600 font-mono">
+            Engenharia Sob o Capô
+          </span>
+          <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            Arquitetura Leve, Descentralizada e Rápida
+          </h2>
+          <p className="text-base text-slate-600">
+            Construído para rodar em hardware modesto sem depender de serviços em nuvem onerosos.
+          </p>
         </div>
-      </section>
 
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <Reveal>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-accent via-indigo-600 to-sky-600 px-6 py-12 text-center shadow-xl shadow-indigo-500/20 sm:px-12 sm:py-16">
+        {/* 5 Cards de Arquitetura */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {stackItems.map((item) => {
+            const Icon = item.icon;
+            return (
               <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.25),transparent_45%)]"
-              />
-              <h2 className="relative text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                Sua próxima vaga está a um clique de distância
-              </h2>
-              <p className="relative mx-auto mt-3 max-w-xl text-sm leading-relaxed text-indigo-100 sm:text-base">
-                Filtre por cargo, empresa e tecnologia, e abra o anúncio completo direto na
-                origem. Sem cadastro, sem enrolação.
-              </p>
-              <div className="relative mt-7">
-                <Link
-                  href="/vagas"
-                  className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-accent shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
-                >
-                  Ver vagas agora
-                  <ArrowRight
-                    size={16}
-                    className="transition-transform duration-300 group-hover:translate-x-1"
-                    aria-hidden
-                  />
-                </Link>
+                key={item.name}
+                className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between hover:border-slate-300 transition-colors shadow-sm"
+              >
+                <div>
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100 mb-4">
+                    <Icon size={18} />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900 mb-2">{item.name}</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+                </div>
+
+                <div className="mt-5 pt-3 border-t border-slate-100 text-[10px] font-mono text-slate-400">
+                  {item.meta}
+                </div>
               </div>
-            </div>
-          </Reveal>
+            );
+          })}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

@@ -1,148 +1,170 @@
 import Link from 'next/link';
-import { ArrowRight, Building2, Clock, ExternalLink, MapPin, Sparkles } from 'lucide-react';
-
-const TAGS = ['React', 'TypeScript', 'Next.js', 'Júnior'];
-
-/** Escalonamento da entrada — classes/keyframes em globals.css. */
-const step = (seconds: number) => ({ animationDelay: `${seconds}s` });
+import { ArrowRight, Send, Terminal, Sparkles, ExternalLink } from 'lucide-react';
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      {/* fundo: malha sutil + dois brilhos */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#e8eaf3_1px,transparent_1px),linear-gradient(to_bottom,#e8eaf3_1px,transparent_1px)] bg-[size:56px_56px] [mask-image:radial-gradient(ellipse_at_top,black_10%,transparent_70%)]" />
-        <div className="absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-indigo-200/50 blur-3xl" />
-        <div className="absolute right-[-6rem] top-40 h-64 w-64 rounded-full bg-emerald-200/40 blur-3xl" />
-      </div>
+    <section className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-b from-slate-50/50 via-white to-white py-14 lg:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
+          {/* Lado Esquerdo: Mensagem e CTAs */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Tag / Badge */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/90 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold text-blue-700">
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse-subtle" />
+              <span className="tracking-wide uppercase font-mono text-[10px]">
+                Monitoramento Autônomo 24/7 Ativo
+              </span>
+            </div>
 
-      <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:pb-28 lg:pt-24">
-        <div>
-          <p
-            className="hero-in inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-3 py-1.5 text-xs font-semibold text-accent shadow-sm"
-            style={step(0)}
-          >
-            <Sparkles size={14} aria-hidden />
-            Atualizado a cada 2 horas, sem você precisar abrir o LinkedIn
-          </p>
+            {/* Headline */}
+            <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-5xl/tight">
+              O radar que caça vagas{' '}
+              <span className="relative inline-block text-blue-600 underline decoration-blue-300 underline-offset-4">
+                Júnior reais
+              </span>{' '}
+              antes de virarem spam.
+            </h1>
 
-          <h1
-            className="hero-in mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-ink sm:text-5xl lg:text-[3.4rem]"
-            style={step(0.08)}
-          >
-            Pare de caçar vagas.
-            <br />
-            <span className="bg-gradient-to-r from-accent via-indigo-500 to-sky-500 bg-clip-text text-transparent">
-              Deixe o robô caçar por você.
-            </span>
-          </h1>
+            {/* Subtítulo */}
+            <p className="max-w-xl text-base text-slate-600 leading-relaxed sm:text-lg">
+              Varredura contínua, deduplicação inteligente e filtro impiedoso contra
+              vagas sênior disfarçadas. 100% gratuito e automatizado para acelerar sua
+              entrada no mercado tech.
+            </p>
 
-          <p
-            className="hero-in mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg"
-            style={step(0.16)}
-          >
-            O Vagas-Hub varre as vagas de TI, descarta{' '}
-            <strong className="font-semibold text-ink">sênior disfarçado de júnior</strong>,
-            consultorias e spam — e te entrega só o que faz sentido para quem está começando.
-          </p>
+            {/* Botões de Ação */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Link
+                href="/vagas"
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-blue-500/25 transition-all hover:bg-blue-700 active:scale-[0.98]"
+              >
+                <span>Explorar Vagas Agora</span>
+                <ArrowRight size={16} />
+              </Link>
 
-          <div className="hero-in mt-8 flex flex-wrap items-center gap-3" style={step(0.24)}>
-            <Link
-              href="/vagas"
-              className="group inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-500/30"
-            >
-              Ver vagas agora
-              <ArrowRight
-                size={16}
-                className="transition-transform duration-300 group-hover:translate-x-1"
-                aria-hidden
-              />
-            </Link>
+              <a
+                href="https://t.me/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
+              >
+                <Send size={15} className="text-blue-500" />
+                <span>Ver Pipeline no Telegram</span>
+              </a>
+            </div>
 
-            <a
-              href="#pipeline"
-              className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-6 py-3 text-sm font-semibold text-ink transition-colors hover:border-accent hover:text-accent"
-            >
-              Como funciona
-            </a>
+            {/* 3 Métricas Rápidas */}
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-100 max-w-lg">
+              <div>
+                <p className="text-2xl font-bold text-slate-900 tracking-tight">14+</p>
+                <p className="text-xs text-slate-500 font-medium">Portais monitorados</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900 tracking-tight">&lt; 3s</p>
+                <p className="text-xs text-slate-500 font-medium">Latência de trigger</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900 tracking-tight">0 R$</p>
+                <p className="text-xs text-slate-500 font-medium">Acesso irrestrito</p>
+              </div>
+            </div>
           </div>
 
-          <dl
-            className="hero-in mt-10 flex flex-wrap gap-x-8 gap-y-4 border-t border-line pt-6"
-            style={step(0.32)}
-          >
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-muted">Foco</dt>
-              <dd className="mt-1 text-sm font-semibold text-ink">Júnior, estágio e trainee</dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-muted">Custo</dt>
-              <dd className="mt-1 text-sm font-semibold text-ink">Scraping 100% gratuito</dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-muted">Ruído</dt>
-              <dd className="mt-1 text-sm font-semibold text-ink">Filtrado antes de te mostrar</dd>
-            </div>
-          </dl>
-        </div>
+          {/* Lado Direito: Terminal Interativo + Card Mockup Flutuante */}
+          <div className="lg:col-span-5 relative">
+            {/* Terminal Window */}
+            <div className="rounded-xl border border-slate-800 bg-[#0d1117] p-4 text-xs font-mono shadow-2xl text-slate-300">
+              {/* Terminal Title Bar */}
+              <div className="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <span className="h-3 w-3 rounded-full bg-rose-500/80 inline-block" />
+                    <span className="h-3 w-3 rounded-full bg-amber-500/80 inline-block" />
+                    <span className="h-3 w-3 rounded-full bg-emerald-500/80 inline-block" />
+                  </div>
+                  <span className="text-[11px] text-slate-400 pl-2">devscout-daemon.sh --stream</span>
+                </div>
+                <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 uppercase tracking-widest font-semibold">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse-subtle" />
+                  LIVE TAIL
+                </span>
+              </div>
 
-        {/* Mock de card flutuante */}
-        <div className="hero-card relative mx-auto w-full max-w-md">
-          <div className="hero-float rounded-2xl border border-line bg-white p-6 shadow-2xl shadow-slate-300/50">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-[15px] font-semibold leading-snug text-ink">
-                  Desenvolvedor Front-end Júnior
+              {/* Logs */}
+              <div className="space-y-2 text-[11px] leading-relaxed select-none">
+                <p className="text-slate-400">
+                  <span className="text-blue-400">$</span> systemctl status devscout.service --no-pager
                 </p>
-                <p className="mt-2 flex items-center gap-1.5 text-sm text-muted">
-                  <Building2 size={14} aria-hidden />
-                  Empresa de tecnologia
+                <p className="text-slate-300">
+                  <span className="text-blue-400">&gt; [CORE]</span> Cluster de telemetria inicializado:{' '}
+                  <span className="text-emerald-400 font-semibold">42 crawlers em execução</span>.
                 </p>
-                <p className="mt-1 flex items-center gap-1.5 text-sm text-muted">
-                  <MapPin size={14} aria-hidden />
-                  Remoto · Brasil
+                <p className="text-slate-300">
+                  <span className="text-purple-400">&gt; [BOT]</span> Scraping 14 portais ativos (Gupy, Greenhouse, Lever, LinkedIn, Kenoby)...
+                </p>
+                <p className="text-slate-300">
+                  <span className="text-rose-400">&gt; [FILTER]</span> 42 falsas vagas júnior descartadas (exigência velada: 4+ anos).
+                </p>
+                <p className="text-slate-300">
+                  <span className="text-blue-400">&gt; [NLP]</span> Parsing de 18 novos payloads concluído com sucesso.
+                </p>
+                <p className="text-emerald-400 font-semibold">
+                  <span>&gt; [MATCH]</span> 3 novas vagas Júnior/Estágio validadas e hash sincronizado!
                 </p>
               </div>
-              <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
-                R$ 4.000
-              </span>
             </div>
 
-            <ul className="mt-4 flex flex-wrap gap-1.5">
-              {TAGS.map((tag) => (
-                <li
-                  key={tag}
-                  className="rounded-md bg-accent-soft px-2 py-0.5 text-xs font-medium text-accent"
+            {/* Card de Vaga em Destaque (Estilo Figma) */}
+            <div className="mt-4 sm:-mt-6 sm:ml-6 rounded-xl border border-blue-200/80 bg-white p-4 shadow-xl ring-1 ring-black/5 transition-transform hover:-translate-y-0.5">
+              <div className="flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <span className="rounded bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-700 font-mono">
+                    Júnior Verificado
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-medium">100% Remoto</span>
+                </div>
+                <div className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 font-mono">
+                  <Sparkles size={12} />
+                  <span>MATCH 98%</span>
+                </div>
+              </div>
+
+              <div className="py-2.5">
+                <h4 className="text-sm font-bold text-slate-900">Frontend Developer Jr</h4>
+                <div className="mt-1 flex items-center gap-2 text-xs">
+                  <span className="font-semibold text-emerald-600 font-mono">
+                    R$ 4.200 - R$ 5.500
+                  </span>
+                  <span className="text-slate-400">•</span>
+                  <span className="text-slate-500">CLT Full</span>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-1.5 pb-3">
+                {['React', 'TypeScript', 'Tailwind CSS', 'REST APIs'].map((tech) => (
+                  <span
+                    key={tech}
+                    className="rounded border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-medium text-slate-600"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
+                <span className="text-slate-400 flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block" />
+                  Capturado há 4 min direto da ATS
+                </span>
+                <Link
+                  href="/vagas"
+                  className="font-medium text-blue-600 hover:text-blue-700 flex items-center gap-0.5"
                 >
-                  {tag}
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-5 flex items-center justify-between border-t border-line pt-4 text-xs text-muted">
-              <span className="flex items-center gap-1.5">
-                <Clock size={13} aria-hidden />
-                há 1 hora
-              </span>
-              <span className="inline-flex items-center gap-1 font-semibold text-accent">
-                Abrir vaga
-                <ExternalLink size={13} aria-hidden />
-              </span>
+                  <span>Ver detalhes</span>
+                  <ExternalLink size={11} />
+                </Link>
+              </div>
             </div>
-          </div>
-
-          <div
-            className="hero-badge absolute -left-4 -top-5 rounded-xl border border-line bg-white px-3 py-2 text-xs font-semibold text-ink shadow-lg"
-            style={step(0.55)}
-          >
-            🛡 Consultoria removida
-          </div>
-
-          <div
-            className="hero-badge absolute -bottom-6 -right-3 rounded-xl border border-line bg-white px-3 py-2 text-xs font-semibold text-ink shadow-lg"
-            style={step(0.75)}
-          >
-            ✅ Vaga analisada
           </div>
         </div>
       </div>
