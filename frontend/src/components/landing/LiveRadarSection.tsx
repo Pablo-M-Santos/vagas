@@ -2,15 +2,30 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ExternalLink, Radio } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import type { JobDTO } from '@/lib/types';
+import { relativeTime, sourceDomain } from '@/lib/format';
 
 interface LiveRadarSectionProps {
   initialJobs?: JobDTO[];
 }
 
-// Exemplos estáticos fiéis ao Figma caso não haja dados suficientes no banco inicial
-const FALLBACK_RADAR_JOBS = [
+interface RadarJobCardData {
+  id: string;
+  level: string;
+  verifiedTime: string;
+  title: string;
+  company: string;
+  location: string;
+  salary: string;
+  tags: string[];
+  tagCategory: string;
+  bottomTag: string;
+  jobUrl: string;
+}
+
+// Exemplos estáticos fiéis caso não haja dados no banco inicial
+const FALLBACK_RADAR_JOBS: RadarJobCardData[] = [
   {
     id: 'f1',
     level: 'JÚNIOR',
@@ -100,10 +115,57 @@ const FILTER_TABS = [
   { id: 'estagio', label: 'Estágio Tech' },
 ];
 
+function detectLevel(title: string): string {
+  const t = title.toLowerCase();
+  if (t.includes('estágio') || t.includes('estagio') || t.includes('intern')) return 'ESTÁGIO';
+  if (t.includes('trainee')) return 'TRAINEE';
+  if (t.includes('júnior') || t.includes('junior') || t.includes('jr')) return 'JÚNIOR';
+  if (t.includes('pleno') || t.includes('mid') || t.includes('pl')) return 'PLENO';
+  if (t.includes('sênior') || t.includes('senior') || t.includes('sr')) return 'SÊNIOR';
+  return 'TECH';
+}
+
+function detectTagCategory(title: string, keywords: string[]): string {
+  const combined = `${title} ${keywords.join(' ')}`.toLowerCase();
+  if (combined.includes('react') || combined.includes('next')) return 'react';
+  if (combined.includes('node') || combined.includes('backend') || combined.includes('nest')) return 'node';
+  if (combined.includes('java') || combined.includes('spring')) return 'java';
+  if (combined.includes('python') || combined.includes('dados') || combined.includes('data')) return 'python';
+  if (combined.includes('estagio') || combined.includes('estágio') || combined.includes('intern') || combined.includes('trainee')) return 'estagio';
+  return 'other';
+}
+
+function mapJobToCard(job: JobDTO): RadarJobCardData {
+  const level = detectLevel(job.title);
+  const tagCategory = detectTagCategory(job.title, job.keywords);
+  const domain = sourceDomain(job.jobUrl);
+  const timeText = relativeTime(job.postedAt ?? job.createdAt);
+
+  return {
+    id: job.id,
+    level,
+    verifiedTime: `Verificado ${timeText}`,
+    title: job.title,
+    company: job.company,
+    location: job.location || 'Brasil / Remoto',
+    salary: job.salary || 'Salário a combinar',
+    tags: job.keywords.length > 0 ? job.keywords.slice(0, 4) : ['Tech', level],
+    tagCategory,
+    bottomTag: `Fonte: ${domain}`,
+    jobUrl: job.jobUrl,
+  };
+}
+
 export function LiveRadarSection({ initialJobs }: LiveRadarSectionProps) {
   const [activeTab, setActiveTab] = useState('all');
 
-  const filteredJobs = FALLBACK_RADAR_JOBS.filter((job) => {
+  // Converte as vagas reais do banco se existirem; se não, usa as do fallback
+  const allCards: RadarJobCardData[] =
+    initialJobs && initialJobs.length > 0
+      ? initialJobs.map(mapJobToCard)
+      : FALLBACK_RADAR_JOBS;
+
+  const filteredJobs = allCards.filter((job) => {
     if (activeTab === 'all') return true;
     return job.tagCategory === activeTab;
   });
@@ -127,7 +189,7 @@ export function LiveRadarSection({ initialJobs }: LiveRadarSectionProps) {
 
           <div className="flex items-center gap-1.5 text-xs text-blue-700 font-mono bg-blue-50 px-3 py-1.5 rounded-full border border-blue-200 self-start md:self-auto">
             <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse-subtle" />
-            <span>Sincronizado via WebSocket</span>
+            <span>Radar Ativo • Base Atualizada</span>
           </div>
         </div>
 
@@ -152,70 +214,90 @@ export function LiveRadarSection({ initialJobs }: LiveRadarSectionProps) {
           })}
         </div>
 
-        {/* Grid de Cards (2 colunas ou 3 colunas) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredJobs.map((job) => (
-            <div
-              key={job.id}
-              className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between hover:border-blue-400 hover:shadow-md transition-all group"
+        {/* Grid de Cards */}
+        {filteredJobs.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-500">
+            Nenhuma vaga encontrada nesta categoria no momento.{' '}
+            <button
+              onClick={() => setActiveTab('all')}
+              className="text-blue-600 hover:underline font-semibold ml-1"
             >
-              <div>
-                {/* Linha superior: Nível e Tempo */}
-                <div className="flex items-center justify-between text-xs mb-3">
-                  <span className="font-mono font-bold text-[10px] uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-200/70 px-2 py-0.5 rounded">
-                    {job.level}
-                  </span>
-                  <span className="text-[11px] text-slate-400 font-medium">
-                    {job.verifiedTime}
-                  </span>
-                </div>
-
-                {/* Cargo e Empresa */}
-                <h3 className="font-bold text-slate-900 text-base group-hover:text-blue-600 transition-colors">
-                  {job.title}
-                </h3>
-                <p className="text-xs text-slate-500 mt-1 font-medium">
-                  {job.company} • <span className="text-slate-700">{job.location}</span>
-                </p>
-
-                {/* Salário */}
-                <div className="mt-3 inline-block">
-                  <span className="text-xs font-bold text-blue-700 font-mono bg-blue-50/60 px-2.5 py-1 rounded border border-blue-100">
-                    {job.salary}
-                  </span>
-                </div>
-
-                {/* Tags de Tecnologias */}
-                <div className="flex flex-wrap gap-1.5 mt-4">
-                  {job.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="rounded border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-medium text-slate-600"
-                    >
-                      {t}
+              Ver todas as vagas
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredJobs.slice(0, 9).map((job) => (
+              <div
+                key={job.id}
+                className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between hover:border-blue-400 hover:shadow-md transition-all group"
+              >
+                <div>
+                  {/* Linha superior: Nível e Tempo */}
+                  <div className="flex items-center justify-between text-xs mb-3">
+                    <span className="font-mono font-bold text-[10px] uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-200/70 px-2 py-0.5 rounded">
+                      {job.level}
                     </span>
-                  ))}
+                    <span className="text-[11px] text-slate-400 font-medium">
+                      {job.verifiedTime}
+                    </span>
+                  </div>
+
+                  {/* Cargo e Empresa */}
+                  <h3 className="font-bold text-slate-900 text-base group-hover:text-blue-600 transition-colors line-clamp-2">
+                    <a
+                      href={job.jobUrl}
+                      target={job.jobUrl.startsWith('http') ? '_blank' : undefined}
+                      rel={job.jobUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    >
+                      {job.title}
+                    </a>
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1 font-medium">
+                    {job.company} • <span className="text-slate-700">{job.location}</span>
+                  </p>
+
+                  {/* Salário */}
+                  <div className="mt-3 inline-block">
+                    <span className="text-xs font-bold text-blue-700 font-mono bg-blue-50/60 px-2.5 py-1 rounded border border-blue-100">
+                      {job.salary}
+                    </span>
+                  </div>
+
+                  {/* Tags de Tecnologias */}
+                  <div className="flex flex-wrap gap-1.5 mt-4">
+                    {job.tags.map((t) => (
+                      <span
+                        key={t}
+                        className="rounded border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-medium text-slate-600"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Rodapé do Card */}
+                <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <span className="text-[11px] text-slate-500 font-mono flex items-center gap-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    {job.bottomTag}
+                  </span>
+
+                  <a
+                    href={job.jobUrl}
+                    target={job.jobUrl.startsWith('http') ? '_blank' : undefined}
+                    rel={job.jobUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    className="font-semibold text-slate-800 hover:text-blue-600 flex items-center gap-1 group-hover:translate-x-0.5 transition-all"
+                  >
+                    <span>Candidatar-se Direto</span>
+                    <ExternalLink size={12} />
+                  </a>
                 </div>
               </div>
-
-              {/* Rodapé do Card */}
-              <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-xs">
-                <span className="text-[11px] text-slate-500 font-mono flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  {job.bottomTag}
-                </span>
-
-                <Link
-                  href="/vagas"
-                  className="font-semibold text-slate-800 hover:text-blue-600 flex items-center gap-1 group-hover:translate-x-0.5 transition-all"
-                >
-                  <span>Candidatar-se Direto</span>
-                  <ExternalLink size={12} />
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Link para catálogo completo */}
         <div className="mt-10 text-center">

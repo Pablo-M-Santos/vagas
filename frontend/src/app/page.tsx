@@ -9,8 +9,8 @@ import { MarketTechRadar } from '@/components/landing/MarketTechRadar';
 import { StackSection } from '@/components/landing/StackSection';
 import { FaqSection } from '@/components/landing/FaqSection';
 import { CallToAction } from '@/components/landing/CallToAction';
-import { fetchStats } from '@/lib/jobs-query';
-import type { StatsResponse } from '@/lib/types';
+import { fetchJobsPage, fetchStats } from '@/lib/jobs-query';
+import type { JobDTO, StatsResponse } from '@/lib/types';
 
 // A landing lê o banco dinamicamente a cada requisição
 export const dynamic = 'force-dynamic';
@@ -24,8 +24,18 @@ async function loadStats(): Promise<StatsResponse> {
   }
 }
 
+async function loadRecentJobs(): Promise<JobDTO[]> {
+  try {
+    const res = await fetchJobsPage({ page: 1, pageSize: 18, sort: 'recent' });
+    return res.jobs;
+  } catch (error) {
+    console.error('[landing/recentJobs]', error);
+    return [];
+  }
+}
+
 export default async function Home() {
-  const stats = await loadStats();
+  const [stats, recentJobs] = await Promise.all([loadStats(), loadRecentJobs()]);
 
   return (
     <div className="flex min-h-screen flex-col bg-white text-slate-900">
@@ -34,7 +44,7 @@ export default async function Home() {
         <Hero />
         <ProblemSection />
         <PipelineSection />
-        <LiveRadarSection />
+        <LiveRadarSection initialJobs={recentJobs} />
         <StatsSection stats={stats} />
         <MarketTechRadar />
         <StackSection />
