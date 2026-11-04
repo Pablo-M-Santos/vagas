@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaLibSQL } from "@prisma/adapter-libsql";
 import { createClient } from "@libsql/client";
+import { NormalizedJob } from "../types/job";
 
 function createPrismaInstance() {
   const url = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL;
