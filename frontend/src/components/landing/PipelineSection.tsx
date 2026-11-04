@@ -1,3 +1,8 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { Reveal, staggerContainerVariants, staggerItemVariants } from './Reveal';
+
 export function PipelineSection() {
   const steps = [
     {
@@ -41,7 +46,7 @@ export function PipelineSection() {
     <section id="pipeline" className="py-20 bg-slate-50/50 border-b border-slate-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Cabeçalho */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+        <Reveal className="text-center max-w-3xl mx-auto mb-16 space-y-3">
           <span className="text-[11px] font-bold uppercase tracking-widest text-blue-600 font-mono">
             Arquitetura de Dados em 5 Etapas
           </span>
@@ -51,17 +56,29 @@ export function PipelineSection() {
           <p className="text-base text-slate-600">
             Como transformamos milhares de dados brutos e ruidosos em notificações limpas, precisas e acionáveis.
           </p>
-        </div>
+        </Reveal>
 
-        {/* 5 Cards da Esteira */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* 5 Cards da Esteira com Stagger e Hover */}
+        <motion.div
+          variants={staggerContainerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"
+        >
           {steps.map((item) => (
-            <div
+            <motion.div
               key={item.step}
-              className={`rounded-xl p-5 flex flex-col justify-between transition-all duration-200 ${
+              variants={staggerItemVariants}
+              whileHover={{
+                y: -6,
+                scale: 1.02,
+                transition: { duration: 0.2 },
+              }}
+              className={`rounded-xl p-5 flex flex-col justify-between transition-colors ${
                 item.isPrimary
-                  ? 'border-2 border-blue-600 bg-white shadow-md shadow-blue-500/5 -translate-y-1'
-                  : 'border border-slate-200 bg-white hover:border-slate-300'
+                  ? 'border-2 border-blue-600 bg-white shadow-lg shadow-blue-500/10'
+                  : 'border border-slate-200 bg-white hover:border-blue-400/80 hover:shadow-md'
               }`}
             >
               <div>
@@ -81,9 +98,9 @@ export function PipelineSection() {
               <div className="pt-3 border-t border-slate-100 text-[10px] font-mono font-semibold text-blue-600">
                 {item.highlight}
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

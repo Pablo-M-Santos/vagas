@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { JobDTO } from '@/lib/types';
 import { relativeTime, sourceDomain } from '@/lib/format';
+import { Reveal, staggerContainerVariants, staggerItemVariants } from './Reveal';
 
 interface LiveRadarSectionProps {
   initialJobs?: JobDTO[];
@@ -24,7 +26,6 @@ interface RadarJobCardData {
   jobUrl: string;
 }
 
-// Exemplos estáticos fiéis caso não haja dados no banco inicial
 const FALLBACK_RADAR_JOBS: RadarJobCardData[] = [
   {
     id: 'f1',
@@ -159,7 +160,6 @@ function mapJobToCard(job: JobDTO): RadarJobCardData {
 export function LiveRadarSection({ initialJobs }: LiveRadarSectionProps) {
   const [activeTab, setActiveTab] = useState('all');
 
-  // Converte as vagas reais do banco se existirem; se não, usa as do fallback
   const allCards: RadarJobCardData[] =
     initialJobs && initialJobs.length > 0
       ? initialJobs.map(mapJobToCard)
@@ -174,7 +174,7 @@ export function LiveRadarSection({ initialJobs }: LiveRadarSectionProps) {
     <section id="radar" className="py-20 bg-white border-b border-slate-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Cabeçalho */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <Reveal className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-widest text-blue-600 font-mono">
               Radar em Execução
@@ -191,15 +191,16 @@ export function LiveRadarSection({ initialJobs }: LiveRadarSectionProps) {
             <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse-subtle" />
             <span>Radar Ativo • Base Atualizada</span>
           </div>
-        </div>
+        </Reveal>
 
         {/* Abas / Filtros rápidos */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-8 no-scrollbar">
+        <Reveal delay={0.1} className="flex items-center gap-2 overflow-x-auto pb-3 mb-8 no-scrollbar">
           {FILTER_TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
-              <button
+              <motion.button
                 key={tab.id}
+                whileTap={{ scale: 0.96 }}
                 onClick={() => setActiveTab(tab.id)}
                 type="button"
                 className={`whitespace-nowrap px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
@@ -209,105 +210,127 @@ export function LiveRadarSection({ initialJobs }: LiveRadarSectionProps) {
                 }`}
               >
                 {tab.label}
-              </button>
+              </motion.button>
             );
           })}
-        </div>
+        </Reveal>
 
-        {/* Grid de Cards */}
-        {filteredJobs.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-500">
-            Nenhuma vaga encontrada nesta categoria no momento.{' '}
-            <button
-              onClick={() => setActiveTab('all')}
-              className="text-blue-600 hover:underline font-semibold ml-1"
+        {/* Grid de Cards Animados */}
+        <AnimatePresence mode="wait">
+          {filteredJobs.length === 0 ? (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-500"
             >
-              Ver todas as vagas
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredJobs.slice(0, 9).map((job) => (
-              <div
-                key={job.id}
-                className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between hover:border-blue-400 hover:shadow-md transition-all group"
+              Nenhuma vaga encontrada nesta categoria no momento.{' '}
+              <button
+                onClick={() => setActiveTab('all')}
+                className="text-blue-600 hover:underline font-semibold ml-1 cursor-pointer"
               >
-                <div>
-                  {/* Linha superior: Nível e Tempo */}
-                  <div className="flex items-center justify-between text-xs mb-3">
-                    <span className="font-mono font-bold text-[10px] uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-200/70 px-2 py-0.5 rounded">
-                      {job.level}
-                    </span>
-                    <span className="text-[11px] text-slate-400 font-medium">
-                      {job.verifiedTime}
-                    </span>
+                Ver todas as vagas
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={activeTab}
+              variants={staggerContainerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+            >
+              {filteredJobs.slice(0, 9).map((job) => (
+                <motion.div
+                  key={job.id}
+                  variants={staggerItemVariants}
+                  whileHover={{
+                    y: -4,
+                    scale: 1.015,
+                    transition: { duration: 0.2 },
+                  }}
+                  className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between hover:border-blue-500/60 hover:shadow-lg hover:shadow-blue-500/10 transition-all group"
+                >
+                  <div>
+                    {/* Linha superior: Nível e Tempo */}
+                    <div className="flex items-center justify-between text-xs mb-3">
+                      <span className="font-mono font-bold text-[10px] uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-200/70 px-2 py-0.5 rounded">
+                        {job.level}
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-medium">
+                        {job.verifiedTime}
+                      </span>
+                    </div>
+
+                    {/* Cargo e Empresa */}
+                    <h3 className="font-bold text-slate-900 text-base group-hover:text-blue-600 transition-colors line-clamp-2">
+                      <a
+                        href={job.jobUrl}
+                        target={job.jobUrl.startsWith('http') ? '_blank' : undefined}
+                        rel={job.jobUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+                      >
+                        {job.title}
+                      </a>
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1 font-medium">
+                      {job.company} • <span className="text-slate-700">{job.location}</span>
+                    </p>
+
+                    {/* Salário */}
+                    <div className="mt-3 inline-block">
+                      <span className="text-xs font-bold text-blue-700 font-mono bg-blue-50/60 px-2.5 py-1 rounded border border-blue-100">
+                        {job.salary}
+                      </span>
+                    </div>
+
+                    {/* Tags de Tecnologias */}
+                    <div className="flex flex-wrap gap-1.5 mt-4">
+                      {job.tags.map((t) => (
+                        <span
+                          key={t}
+                          className="rounded border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-medium text-slate-600"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Cargo e Empresa */}
-                  <h3 className="font-bold text-slate-900 text-base group-hover:text-blue-600 transition-colors line-clamp-2">
+                  {/* Rodapé do Card */}
+                  <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-slate-500 font-mono flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      {job.bottomTag}
+                    </span>
+
                     <a
                       href={job.jobUrl}
                       target={job.jobUrl.startsWith('http') ? '_blank' : undefined}
                       rel={job.jobUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+                      className="font-semibold text-slate-800 hover:text-blue-600 flex items-center gap-1 group-hover:translate-x-0.5 transition-all"
                     >
-                      {job.title}
+                      <span>Candidatar-se Direto</span>
+                      <ExternalLink size={12} />
                     </a>
-                  </h3>
-                  <p className="text-xs text-slate-500 mt-1 font-medium">
-                    {job.company} • <span className="text-slate-700">{job.location}</span>
-                  </p>
-
-                  {/* Salário */}
-                  <div className="mt-3 inline-block">
-                    <span className="text-xs font-bold text-blue-700 font-mono bg-blue-50/60 px-2.5 py-1 rounded border border-blue-100">
-                      {job.salary}
-                    </span>
                   </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-                  {/* Tags de Tecnologias */}
-                  <div className="flex flex-wrap gap-1.5 mt-4">
-                    {job.tags.map((t) => (
-                      <span
-                        key={t}
-                        className="rounded border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-medium text-slate-600"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Rodapé do Card */}
-                <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="text-[11px] text-slate-500 font-mono flex items-center gap-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                    {job.bottomTag}
-                  </span>
-
-                  <a
-                    href={job.jobUrl}
-                    target={job.jobUrl.startsWith('http') ? '_blank' : undefined}
-                    rel={job.jobUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    className="font-semibold text-slate-800 hover:text-blue-600 flex items-center gap-1 group-hover:translate-x-0.5 transition-all"
-                  >
-                    <span>Candidatar-se Direto</span>
-                    <ExternalLink size={12} />
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Link para catálogo completo */}
-        <div className="mt-10 text-center">
-          <Link
-            href="/vagas"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline"
-          >
-            Ver todas as centenas de vagas disponíveis no catálogo &rarr;
-          </Link>
-        </div>
+        {/* Link para catálogo completo com micro-interação */}
+        <Reveal delay={0.2} className="mt-10 text-center">
+          <motion.div whileHover={{ scale: 1.02 }} className="inline-block">
+            <Link
+              href="/vagas"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+            >
+              Ver todas as centenas de vagas disponíveis no catálogo &rarr;
+            </Link>
+          </motion.div>
+        </Reveal>
       </div>
     </section>
   );

@@ -1,4 +1,8 @@
+'use client';
+
 import { Terminal, Database, Server, Send, Code2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Reveal, staggerContainerVariants, staggerItemVariants } from './Reveal';
 
 export function StackSection() {
   const stackItems = [
@@ -38,7 +42,7 @@ export function StackSection() {
     <section id="stack" className="py-20 bg-slate-50/50 border-b border-slate-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Cabeçalho */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+        <Reveal className="text-center max-w-3xl mx-auto mb-16 space-y-3">
           <span className="text-[11px] font-bold uppercase tracking-widest text-blue-600 font-mono">
             Engenharia Sob o Capô
           </span>
@@ -48,16 +52,28 @@ export function StackSection() {
           <p className="text-base text-slate-600">
             Construído para rodar em hardware modesto sem depender de serviços em nuvem onerosos.
           </p>
-        </div>
+        </Reveal>
 
-        {/* 5 Cards de Arquitetura */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* 5 Cards de Arquitetura com Stagger e Hover */}
+        <motion.div
+          variants={staggerContainerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"
+        >
           {stackItems.map((item) => {
             const Icon = item.icon;
             return (
-              <div
+              <motion.div
                 key={item.name}
-                className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between hover:border-slate-300 transition-colors shadow-sm"
+                variants={staggerItemVariants}
+                whileHover={{
+                  y: -5,
+                  scale: 1.02,
+                  transition: { duration: 0.2 },
+                }}
+                className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between hover:border-blue-500/60 hover:shadow-lg hover:shadow-blue-500/5 transition-colors shadow-sm"
               >
                 <div>
                   <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100 mb-4">
@@ -70,10 +86,10 @@ export function StackSection() {
                 <div className="mt-5 pt-3 border-t border-slate-100 text-[10px] font-mono text-slate-400">
                   {item.meta}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

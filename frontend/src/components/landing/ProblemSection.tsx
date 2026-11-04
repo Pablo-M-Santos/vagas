@@ -1,11 +1,15 @@
-import { X, Check, Clock, TrendingUp, AlertCircle, ShieldCheck } from 'lucide-react';
+'use client';
+
+import { X, Check, AlertCircle, ShieldCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Reveal, staggerContainerVariants, staggerItemVariants } from './Reveal';
 
 export function ProblemSection() {
   return (
     <section id="problema" className="py-20 bg-white border-b border-slate-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Cabeçalho da Seção */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+        {/* Cabeçalho da Seção com Reveal */}
+        <Reveal className="text-center max-w-3xl mx-auto mb-16 space-y-3">
           <span className="text-[11px] font-bold uppercase tracking-widest text-blue-600 font-mono">
             Diagnóstico do Mercado Tech
           </span>
@@ -16,12 +20,22 @@ export function ProblemSection() {
             Enquanto plataformas tradicionais transformaram a busca em um jogo exaustivo e sem retorno, a
             telemetria autônoma restaura a precisão técnica.
           </p>
-        </div>
+        </Reveal>
 
-        {/* Comparativo lado a lado */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        {/* Comparativo lado a lado com Stagger Reveal */}
+        <motion.div
+          variants={staggerContainerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto"
+        >
           {/* Card: Busca Manual Tradicional */}
-          <div className="rounded-2xl border border-rose-200/80 bg-rose-50/20 p-6 sm:p-8 flex flex-col justify-between">
+          <motion.div
+            variants={staggerItemVariants}
+            whileHover={{ y: -4, transition: { duration: 0.25 } }}
+            className="rounded-2xl border border-rose-200/80 bg-rose-50/20 p-6 sm:p-8 flex flex-col justify-between transition-colors hover:border-rose-300 hover:shadow-lg hover:shadow-rose-500/5"
+          >
             <div className="space-y-6">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100 text-rose-600">
@@ -76,10 +90,14 @@ export function ProblemSection() {
               <span>TAXA DE CONVERSÃO: &lt; 0.8%</span>
               <span className="font-semibold text-rose-700">TEMPO GASTO: 18h/semana</span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Card: O Algoritmo DevScout */}
-          <div className="rounded-2xl border border-blue-200/90 bg-blue-50/20 p-6 sm:p-8 flex flex-col justify-between shadow-sm">
+          <motion.div
+            variants={staggerItemVariants}
+            whileHover={{ y: -4, scale: 1.015, transition: { duration: 0.25 } }}
+            className="rounded-2xl border border-blue-200/90 bg-blue-50/20 p-6 sm:p-8 flex flex-col justify-between shadow-sm hover:border-blue-500/60 hover:shadow-xl hover:shadow-blue-500/10 transition-all"
+          >
             <div className="space-y-6">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
@@ -106,7 +124,7 @@ export function ProblemSection() {
                     <Check size={12} strokeWidth={3} />
                   </span>
                   <div>
-                    <strong className="text-slate-800 font-semibold">Deduplicação por hash semântico:</strong> Ignora reposts predatórios de consultorias e mantém apenas a fonte original da empresa.
+                    <strong className="text-slate-800 font-semibold">Zero intermediários ou taxas:</strong> Apenas links diretos para ATS nativas (Greenhouse, Lever, Workable, Gupy, etc.).
                   </div>
                 </li>
 
@@ -115,7 +133,7 @@ export function ProblemSection() {
                     <Check size={12} strokeWidth={3} />
                   </span>
                   <div>
-                    <strong className="text-slate-800 font-semibold">Disparo em zero delay:</strong> Notificação imediata via bot no Telegram assim que a requisição de abertura entra no ar.
+                    <strong className="text-slate-800 font-semibold">Deduplicação por assinatura:</strong> O robô gera um hash único da vaga para nunca reenviar oportunidades repetidas.
                   </div>
                 </li>
 
@@ -124,18 +142,18 @@ export function ProblemSection() {
                     <Check size={12} strokeWidth={3} />
                   </span>
                   <div>
-                    <strong className="text-slate-800 font-semibold">Transparência radical:</strong> Extração automática de faixa salarial, stack prioritária e link direto à página de aplicação.
+                    <strong className="text-slate-800 font-semibold">Alerta em tempo real:</strong> Seja um dos primeiros 10 a se candidatar, quando o recrutador ainda avalia manualmente.
                   </div>
                 </li>
               </ul>
             </div>
 
             <div className="mt-8 pt-4 border-t border-blue-200/60 flex items-center justify-between text-xs font-mono text-slate-500">
-              <span className="text-blue-700 font-medium">QUALIFICAÇÃO DE SINAL: 94.2%</span>
-              <span className="font-semibold text-blue-700">TEMPO GASTO: 5min/dia</span>
+              <span className="text-blue-700 font-semibold">TAXA DE RELEVÂNCIA: 94%</span>
+              <span className="font-semibold text-emerald-600">ZERO HORAS PERDIDAS</span>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
