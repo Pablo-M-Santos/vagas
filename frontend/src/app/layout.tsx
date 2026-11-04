@@ -4,13 +4,13 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Vagas-Hub — vagas de TI júnior e estágio sem caça manual",
-    template: "%s · Vagas-Hub",
+    default: "DevScout — vagas de TI júnior e estágio sem caça manual",
+    template: "%s · DevScout",
   },
   description:
     "Coletor automático de vagas de TI para nível júnior e estágio: filtramos seniores, consultorias e spam, e entregamos só o que faz sentido para você.",
   openGraph: {
-    title: "Vagas-Hub",
+    title: "DevScout",
     description:
       "Vagas de TI júnior e estágio, filtradas automaticamente e atualizadas a cada 2 horas.",
     type: "website",

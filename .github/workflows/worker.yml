@@ -22,25 +22,16 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
-      - name: Gerar Prisma Client e Criar Tabelas
+      - name: Gerar Prisma Client
         run: |
           npx prisma generate
-          npx prisma db push --skip-generate
         env:
-          DATABASE_URL: "file:./vagas.db"
+          DATABASE_URL: "file:./dev.db"
 
       - name: Executar Worker de Vagas
         run: npm run worker:run-once
         env:
-          DATABASE_URL: "file:./vagas.db"
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-
-      - name: Persistir banco SQLite no repositório
-        if: always()
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add vagas.db
-          git commit -m "chore(db): update sqlite state [skip ci]" || exit 0
-          git push
