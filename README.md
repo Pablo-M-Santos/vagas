@@ -1,5 +1,9 @@
 <div align="center">
 
+<img src="./frontend/assets/img/home.png" alt="Tela principal do portfólio de Pablo Moreira Santos" width="100%" />
+
+
+
 # 🛰️ DevScout
 
 **O radar autônomo que caça oportunidades de tecnologia Júnior e Estágio reais antes de virarem spam.**
