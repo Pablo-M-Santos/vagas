@@ -1,4 +1,4 @@
-import { NormalizedJob, JobPlatformAdapter } from '../types/job';
+import { NormalizedJob, JobPlatformAdapter } from '../../../packages/domain/src/job';
 import { ApifyClient } from 'apify-client';
 import dotenv from 'dotenv';
 

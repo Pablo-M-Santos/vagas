@@ -14,8 +14,8 @@ Dentro desta pasta: `npm run lint`, `npm run typecheck`, `npm run db:push`.
 
 ## Como os dados chegam aqui
 
-- `frontend/prisma/schema.prisma` é um **symlink** de `../../prisma/schema.prisma` (fonte única).
-- `DATABASE_URL` (`file:../../prisma/vagas.db`) é resolvido pelo Prisma **a partir do diretório do
+- `apps/web/prisma/schema.prisma` é um **symlink** de `../../../prisma/schema.prisma` (fonte única).
+- `DATABASE_URL` (`file:../../../prisma/vagas.db`) é resolvido pelo Prisma **a partir do diretório do
   schema**, ou seja, aponta para o mesmo SQLite do worker.
 - A rota `/vagas` é um Server Component: consulta o SQLite direto a cada navegação e hidrata a
   lista; as rotas `/api/*` existem para consumo externo e como fallback do client.
@@ -36,4 +36,4 @@ src/
 └── lib/                    # filtros puro, SQL parametrizado, formatacao, prisma
 ```
 
-O plano completo (fases, decisões e pendências) está em [`../FRONTEND.md`](../FRONTEND.md).
+O plano completo (fases, decisões e pendências) está em [`../../FRONTEND.md`](../../FRONTEND.md).

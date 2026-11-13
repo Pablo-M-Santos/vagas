@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { NormalizedJob, JobPlatformAdapter } from '../types/job';
+import { NormalizedJob, JobPlatformAdapter } from '../../../packages/domain/src/job';
 
 export class LinkedInNativeAdapter implements JobPlatformAdapter {
   readonly platformName = 'LINKEDIN';

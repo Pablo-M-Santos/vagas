@@ -1,5 +1,5 @@
 import { analyzeJob } from './index';
-import { NormalizedJob } from '../types/job';
+import { NormalizedJob } from '../../../packages/domain/src/job';
 
 const job: NormalizedJob = {
     externalJobId: '1',

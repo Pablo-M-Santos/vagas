@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   // SQLite do worker a cada requisição (os dados mudam a cada 2h).
   cacheComponents: false,
   serverExternalPackages: ["@prisma/client", "prisma"],
-  // O repositório tem package-lock na raiz e em frontend/ — fixamos a raiz
+  // O repositório tem package-lock na raiz e em apps/web/ — fixamos a raiz
   // do Turbopack aqui para não herdar a do monorepo por engano.
   turbopack: {
     root: __dirname,

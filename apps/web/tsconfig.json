@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@devscout/domain/*": ["../../packages/domain/src/*"]
     }
   },
   "include": [

@@ -1,4 +1,4 @@
-import { NormalizedJob } from '../types/job';
+import { NormalizedJob } from '../../../packages/domain/src/job';
 
 export interface AnalysisResult {
   approved: boolean;
