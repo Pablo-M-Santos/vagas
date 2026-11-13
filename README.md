@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./frontend/assets/img/home.png" alt="Tela principal do portfólio de Pablo Moreira Santos" width="100%" />
+<img src="./apps/web/assets/img/home.png" alt="Tela principal do DevScout" width="100%" />
 
 
 
@@ -114,7 +114,7 @@ flowchart LR
    npm install
 
    # Instala dependências da aplicação Next.js
-   cd frontend && npm install && cd ..
+   cd apps/web && npm install && cd ../..
    ```
 
 3. **Configurar as Variáveis de Ambiente:**
@@ -176,20 +176,23 @@ devscout/
 ├── prisma/
 │   ├── schema.prisma        # Modelagem do banco (Job, ExecutionLog)
 │   └── vagas.db             # Banco de dados local SQLite
-├── src/                     # Núcleo de Scraping, Telemetria e Bot
-│   ├── adapters/            # Conectores de coleta (LinkedIn nativo, Apify)
-│   ├── analyzer/            # Filtro semântico de senioridade e anti-spam
-│   ├── bot/                 # Integração de notificações do Telegram
-│   ├── database/            # Repositórios e queries Prisma
-│   ├── scheduler/           # Agendador de tarefas periódicas (node-cron)
-│   └── index.ts             # Entrypoint do daemon backend
-├── frontend/                # Aplicação Web (Next.js 16)
+├── apps/
+│   ├── worker/              # Scraping, análise, persistência e notificações
+│   │   ├── adapters/        # Conectores de coleta (LinkedIn nativo, Apify)
+│   │   ├── analyzer/        # Filtro semântico de senioridade e anti-spam
+│   │   ├── bot/             # Integração de notificações do Telegram
+│   │   ├── database/        # Repositórios e queries Prisma
+│   │   ├── scheduler/       # Agendador de tarefas periódicas (node-cron)
+│   │   └── index.ts         # Entrypoint do worker
+│   └── web/                 # Aplicação Web (Next.js)
 │   ├── src/
 │   │   ├── app/             # Rotas do Next.js App Router (Landing, /vagas, APIs)
 │   │   ├── components/      # Componentes reutilizáveis de UI
 │   │   │   ├── landing/     # Seções da landing com Framer Motion (Hero, Radar, etc.)
 │   │   │   └── vagas/       # Componentes do catálogo (JobCard, FilterSidebar, etc.)
 │   │   └── lib/             # Helpers puros, tipos, queries do SQLite e testes
+├── packages/
+│   └── domain/              # Tipos compartilhados entre worker e web
 ├── .env.example             # Modelo de configuração de ambiente
 ├── package.json             # Scripts e dependências raiz
 └── README.md                # Documentação oficial do projeto

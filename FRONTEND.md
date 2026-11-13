@@ -63,39 +63,40 @@
 
 ## 3. Estrutura de pastas proposta
 
-Monorepo simples: o frontend vive em `frontend/` dentro do repositório atual.
+Monorepo simples: as aplicações vivem em `apps/` e os contratos compartilhados em `packages/`.
 
 ```
 vagas-hub/
-├── prisma/
-│   └── schema.prisma          # fonte única do schema (compartilhada)
-├── src/                        # backend (worker) — NÃO mexer
-│   ├── adapters/
-│   ├── analyzer/
-│   ├── bot/
-│   ├── database/
-│   └── scheduler/
-│
-└── frontend/                   # ← NOVO (app Next.js)
-    ├── package.json            # próprio (next, react, tailwind, framer-motion)
-    ├── next.config.ts          # rewrites para /api se separado; output standalone
-    ├── tailwind.config.ts
-    ├── .env.local              # DATABASE_URL=file:../vagas.db
-    └── src/
-        ├── app/
-        │   ├── layout.tsx          # fontes, tema, Header global
-        │   ├── page.tsx            # 🔷 LANDING PAGE
-        │   ├── globals.css
-        │   ├── vagas/
-        │   │   ├── page.tsx        # 📋 TELA DE VAGAS (client component)
-        │   │   ├── loading.tsx     # skeleton animado
-        │   │   └── error.tsx
-        │   └── api/
-        │       ├── jobs/route.ts       # GET /api/jobs  (lista + filtros)
-        │       ├── jobs/[id]/route.ts  # GET /api/jobs/:id (detalhe)
-        │       ├── filters/route.ts    # GET /api/filters (opções p/ selects)
-        │       └── stats/route.ts      # GET /api/stats (números p/ landing)
-        ├── components/
+├── apps/
+│   ├── worker/                 # backend (worker)
+│   │   ├── adapters/
+│   │   ├── analyzer/
+│   │   ├── bot/
+│   │   ├── database/
+│   │   ├── scheduler/
+│   │   └── index.ts
+│   └── web/                    # aplicação Next.js
+├── packages/
+│   └── domain/                 # tipos compartilhados
+└── prisma/
+    └── schema.prisma           # fonte única do schema
+```
+
+Dentro de `apps/web/`:
+
+```
+apps/web/
+├── package.json                # next, react, tailwind, framer-motion
+├── next.config.ts
+├── .env.local
+└── src/
+    ├── app/
+    │   ├── layout.tsx
+    │   ├── page.tsx
+    │   ├── globals.css
+    │   ├── vagas/
+    │   └── api/
+    ├── components/
         │   ├── layout/
         │   │   ├── Header.tsx           # logo + botão "Ver vagas"
         │   │   └── Footer.tsx
@@ -314,9 +315,9 @@ O schema atual **não** tem todos os campos que a UI quer exibir. Plano:
 ## 8. Roadmap de implementação
 
 ### Fase 0 — Fundação ✅ concluída
-- [x] `frontend/` criado com `create-next-app` (TS + Tailwind v4 + App Router + ESLint)
-- [x] Schema compartilhado por symlink (`frontend/prisma/schema.prisma` → `../../prisma/schema.prisma`);
-      `DATABASE_URL="file:../../prisma/vagas.db"` em `frontend/.env.local` (Next) e `frontend/prisma/.env` (CLI)
+- [x] `apps/web/` criado com Next.js (TS + Tailwind v4 + App Router + ESLint)
+- [x] Schema compartilhado por symlink (`apps/web/prisma/schema.prisma` → `../../../prisma/schema.prisma`);
+      `DATABASE_URL="file:../../../prisma/vagas.db"` em `apps/web/.env.local` (Next) e `apps/web/prisma/.env` (CLI)
       — o Prisma resolve caminho relativo a partir do diretório do schema
 - [x] `lib/types.ts`, `lib/filters.ts` (puro, seguro p/ client), `lib/jobs-query.ts` (server) e `lib/db.ts` (singleton)
 - [x] Dev em `:3000` (`npm run web` na raiz); o worker continua sendo cron, sem servidor HTTP
@@ -371,7 +372,7 @@ O schema atual **não** tem todos os campos que a UI quer exibir. Plano:
 
 ## 9. Decisões tomadas ✅
 
-1. **Deploy: alternativa (a)** — mesmo servidor/Pm2 do worker. O `frontend/` sobe com
+1. **Deploy: alternativa (a)** — mesmo servidor/Pm2 do worker. O `apps/web/` sobe com
    `npm run web:build && npm run web:start` (ou `pm2 start npm --name "vagas-web" -- run web:start`).
    O SQLite continua sendo a única fonte de dados, sem serviço extra.
 2. **Filtros: só o básico** — busca por texto (título/empresa/descrição), filtro por empresa,
@@ -396,10 +397,10 @@ O schema atual **não** tem todos os campos que a UI quer exibir. Plano:
 ```bash
 # na raiz do repositório
 npm run web          # dev em http://localhost:3000
-npm run web:build    # build de produção (gera frontend/.next)
+npm run web:build    # build de produção (gera apps/web/.next)
 npm run web:start    # serve o build de produção
 npm run web:test     # testes unitários (Vitest)
 ```
 
-Dentro de `frontend/` também valem `npm run lint`, `npm run typecheck` e `npm run db:push`.
+Dentro de `apps/web/` também valem `npm run lint`, `npm run typecheck` e `npm run db:push`.
 O banco é o mesmo do worker (`prisma/vagas.db`) — nada de migrate paralelo.
